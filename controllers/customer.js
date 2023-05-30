@@ -23,31 +23,10 @@ exports.getCustomers = async (req, res) => {
     const findAll = await schema.find({});
     res.status(200).json(findAll);
   } catch (error) {
-    res.status(500).json({ message: errr.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
-// exports.updateCustomer = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const customer = req.body;
-//     const isFound = await schema.findOne({ _id: id });
-//     if (!isFound?.phone)
-//       return res.status(400).json({ message: "Customer not exist" });
-//     const updated = await schema.findByIdAndUpdate(id, customer, {
-//       new: true,
-//     });
-
-//     return res.status(200).json({
-//       ...updated._doc,
-//       message: "Customer updated Successfuly",
-//     });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
-
-// another way to update
 exports.updateCustomer = async (req, res) => {
   const name = req.body.name;
   const phone = req.body.phone;
@@ -82,6 +61,16 @@ exports.deleteCsutomer = async (req, res) => {
       ...deleted._doc,
       message: "Customer deleted Successfuly",
     });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// collections total count of customers
+exports.countCustomers = async (req, res) => {
+  try {
+    const count = await schema.countDocuments({});
+    return res.status(200).json({ count });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

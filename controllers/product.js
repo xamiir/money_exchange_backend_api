@@ -1,14 +1,42 @@
 const product = require("../models/product");
+// const { uploadImage } = require("../cloudinary");
+
+const cloudinary = require("cloudinary").v2;
+
+// Configuration
+cloudinary.config({
+  cloud_name: "dfk7yokdz",
+  api_key: "566862943764854",
+  api_secret: "sM2xJQ24GzEppYDzAUYDCTqSwD8",
+});
+
+const upload_image = (file) => {
+  const res = cloudinary.uploader.upload(file, {
+    folder: "inventory",
+    public_id: "inventory",
+  });
+  return res;
+};
 
 const schema = product;
+
+exports.uploadImage = async (req, res) => {
+  try {
+    const file = req.file.path;
+    const image = await upload_image(file);
+    res.status(200).json(image.secure_url);
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
 
 exports.createProduct = async (req, res) => {
   try {
     const product = req.body;
+
     const isFound = await schema.findOne({ name: product.name });
     if (isFound?.name)
       return res.status(400).json({ message: "Product Already exist" });
-
     const productBody = {
       ...product,
       total: product.cost * product.quantity,
@@ -66,6 +94,15 @@ exports.deleteProduct = async (req, res) => {
       ...deleted._doc,
       message: "Products deleted Successfuly",
     });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+exports.totalProducts = async (req, res) => {
+  try {
+    const count = await schema.countDocuments({});
+    return res.status(200).json({ count });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

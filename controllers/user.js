@@ -1,4 +1,7 @@
 const User = require("../models/user");
+// const jwt = require("jsonwebtoken");
+// const JWT_SECRET =
+//   "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
 
 const schema = User;
 
@@ -90,3 +93,27 @@ exports.deleteUser = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+exports.totalUser = async (req, res) => {
+  try {
+    const count = await schema.countDocuments({});
+    return res.status(200).json({ count });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+// write loging page controller here code
+
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await schema.findOne({ email });
+  if (!user) {
+    return res.json({ error: "User Not found" });
+  }
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return res.json({ error: "Invalid Credentials" });
+  }
+  const token = jwt.sign({ _id: user._id }, JWT_SECRET);
+  res.json({ token, user });
+};
+// write loging page controller here code

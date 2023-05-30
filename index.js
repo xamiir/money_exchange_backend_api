@@ -5,9 +5,11 @@ const UserRoutes = require("./routes/user");
 const CategoryRoutes = require("./routes/category");
 const customerRoutes = require("./routes/customer");
 const ProductRotues = require("./routes/product");
+const OrderRoutes = require("./routes/orders");
+
 const cors = require("cors");
 const morgan = require("morgan");
-
+require("dotenv").config();
 connectDB();
 
 const server = express();
@@ -25,6 +27,7 @@ server.use("/api", UserRoutes);
 server.use("/api", CategoryRoutes);
 server.use("/api", customerRoutes);
 server.use("/api", ProductRotues);
+server.use("/api", OrderRoutes);
 
 const port = 8000;
 server.listen(port, () => console.log(`Listening on port ${port}`));

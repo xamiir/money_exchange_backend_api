@@ -76,3 +76,12 @@ exports.deleteCategory = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+exports.totalCategory = async (req, res) => {
+  try {
+    const count = await schema.countDocuments({});
+    return res.status(200).json({ count });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
