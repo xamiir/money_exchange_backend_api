@@ -1,4 +1,7 @@
 const User = require("../models/user");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
 // const jwt = require("jsonwebtoken");
 // const JWT_SECRET =
 //   "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
@@ -101,19 +104,23 @@ exports.totalUser = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-// write loging page controller here code
+//  loging page controller here code
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
-  const user = await schema.findOne({ email });
-  if (!user) {
-    return res.json({ error: "User Not found" });
+  try {
+    const user = await schema.findOne({ email });
+    if (!user) {
+      return res.json({ error: "User not found" });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.json({ error: "Invalid Credentials" });
+    }
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    res.cookie("token", token);
+    return res.json({ token, user, message: "Login Successfuly" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    return res.json({ error: "Invalid Credentials" });
-  }
-  const token = jwt.sign({ _id: user._id }, JWT_SECRET);
-  res.json({ token, user });
 };
-// write loging page controller here code

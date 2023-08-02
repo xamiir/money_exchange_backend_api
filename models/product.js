@@ -5,6 +5,7 @@ const schema = new Schema(
     name: { type: String, required: true },
     cost: { type: Number, required: true },
     quantity: { type: Number, required: true },
+    salesprice: { type: Number, requireed: true },
     description: { type: String, required: true },
     image: String,
     total: { type: Number, required: true },

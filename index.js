@@ -6,7 +6,7 @@ const CategoryRoutes = require("./routes/category");
 const customerRoutes = require("./routes/customer");
 const ProductRotues = require("./routes/product");
 const OrderRoutes = require("./routes/orders");
-
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 require("dotenv").config();
@@ -18,6 +18,7 @@ server.use(cors());
 server.use(morgan("dev"));
 
 server.use(express.json());
+server.use(cookieParser());
 //server get request
 server.get("/", (req, res) => {
   res.send("Hello World!");

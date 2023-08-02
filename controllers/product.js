@@ -64,13 +64,15 @@ exports.updateProduct = async (req, res) => {
   const cost = req.body.cost;
   const quantity = req.body.quantity;
   const description = req.body.description;
+  const salesprice = req.body.salesprice;
   const total = req.body.total;
   const category = req.body.category;
   const _id = req.params.id;
+
   try {
     const product = await schema.findOneAndUpdate(
       { _id },
-      { name, cost, quantity, description, total, category },
+      { name, cost, quantity, salesprice, description, total, category },
       { new: true }
     );
     if (!product) {

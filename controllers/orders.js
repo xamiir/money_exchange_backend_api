@@ -12,10 +12,7 @@ exports.getMeta = async (req, res) => {
 };
 
 exports.getOrders = async (req, res) => {
-  const orders = await Orders.find()
-    .populate("items")
-    .populate("customer")
-    .populate("orderedBy");
+  const orders = await Orders.find().populate("customer").populate("orderedBy");
 
   res.status(200).json(orders);
 };
@@ -29,13 +26,64 @@ exports.getOrder = async (req, res) => {
   res.status(200).json(order);
 };
 
+// exports.createOrder = async (req, res) => {
+//   // const getProducts = await Products.find({}).populate("category");
+//   // req.body.items // and getProducts
+//   req.body.items.forEach(async (item) => {
+//     const product = await Products.findById(item._id);
+//     if (product.quantity < item.quantity) {
+//       return res.status(400).json({
+//         message: `Product ${product.name} is out of stock`,
+//       });
+//     }
+//   });
+
+//   const newOrder = new Orders(req.body);
+//   await newOrder.save();
+
+//   // update product quantity
+//   const getOrders = await Orders.findById(newOrder._id).populate("items");
+//   getOrders.items.forEach(async (item) => {
+//     const product = await Products.findById(item._id).exec();
+//     product.quantity = product.quantity - item.quantity;
+//     await product.save();
+//   });
+
+//   newOrder &&
+//     res.status(201).json({
+//       message: "Order created successfully",
+//       ...newOrder._doc,
+//     });
+// };
+
 exports.createOrder = async (req, res) => {
-  const newOrder = new Orders(req.body);
-  await newOrder.save();
-  res.status(201).json({
-    message: "Order created successfully",
-    ...newOrder._doc,
-  });
+  try {
+    for (const item of req.body.items) {
+      const product = await Products.findById(item._id);
+      if (product.quantity < item.quantity) {
+        return res.status(400).json({
+          message: `Product ${product.name} is out of stock`,
+        });
+      }
+    }
+
+    const newOrder = new Orders(req.body);
+    await newOrder.save();
+
+    for (const item of newOrder.items) {
+      const product = await Products.findById(item._id).exec();
+      product.quantity = product.quantity - item.quantity;
+      await product.save();
+    }
+
+    res.status(201).json({
+      message: "Order created successfully",
+      ...newOrder._doc,
+    });
+  } catch (error) {
+    console.error("Error creating order:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 };
 
 exports.updateOrder = async (req, res) => {
@@ -74,6 +122,17 @@ exports.totalOrder = async (req, res) => {
   try {
     const count = await Orders.countDocuments({});
     res.status(200).json(count);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteAll = async (req, res) => {
+  try {
+    await Orders.deleteMany({});
+    res.status(200).json({
+      message: "All orders deleted successfully",
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
