@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
-const URI =
-  "mongodb+srv://xamiir:xamiir_10@cluster0.ifakhb3.mongodb.net/inventory_db";
+const URI = "mongodb://127.0.0.1:27017/App_DB";
 
 exports.connectDB = async () => {
   try {

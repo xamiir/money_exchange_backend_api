@@ -2,10 +2,9 @@ const express = require("express");
 // const model = require("./model");
 const { connectDB } = require("./config/dbconnection");
 const UserRoutes = require("./routes/user");
-const CategoryRoutes = require("./routes/category");
-const customerRoutes = require("./routes/customer");
-const ProductRotues = require("./routes/product");
-const OrderRoutes = require("./routes/orders");
+const currenciesRouter = require('./routes/currency');
+const transactionsRouter = require('./routes/transactions');
+
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -25,10 +24,9 @@ server.get("/", (req, res) => {
 });
 
 server.use("/api", UserRoutes);
-server.use("/api", CategoryRoutes);
-server.use("/api", customerRoutes);
-server.use("/api", ProductRotues);
-server.use("/api", OrderRoutes);
+server.use('/api', currenciesRouter);
+server.use('/api', transactionsRouter);
 
-const port = 8000;
+
+const port = 5000;
 server.listen(port, () => console.log(`Listening on port ${port}`));
