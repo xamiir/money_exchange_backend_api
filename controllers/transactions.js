@@ -4,7 +4,7 @@ const Currency = require('../models/currency'); // Adjust the path if needed
 const User = require('../models/user');
 exports.exchangeMoney = async (req, res) => {
   try {
-    const { userId, amount, currencyFrom, currencyTo, exchangeRate } = req.body;
+    const { userId, amount, currencyFrom, currencyTo, exchangeRate  } = req.body;
 
     // Perform any additional validation if needed
     // If the same currency, return an error
@@ -89,4 +89,43 @@ exports.getUserTransactions = async (req, res) => {
     console.error('Error fetching transactions:', err);
     res.status(500).send({ message: err.message });
   }
+};exports.getTotalTransactions = async (req, res) => {
+  try {
+    const userId = req.user ? req.user.id : null;
+
+    if (!userId) {
+      return res.status(401).send({ message: 'User not authenticated' });
+    }
+
+    const totalTransactions = await Transaction.countDocuments({ userId });
+
+    res.status(200).send({ totalTransactions });
+  } catch (err) {
+    console.error('Error fetching total transactions:', err);
+    res.status(500).send({ message: err.message });
+  }
 };
+
+
+
+// get total transactions for all users
+
+exports.getTotalTransactions = async (req, res) => {
+  try {
+    const totalTransactions = await Transaction.countDocuments();
+
+    res.status(200).send({ totalTransactions });
+  } catch (err) {
+    console.error('Error fetching total transactions:', err);
+    res.status(500).send({ message: err.message });
+  }
+};
+
+
+
+
+
+
+
+
+

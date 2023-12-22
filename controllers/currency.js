@@ -80,3 +80,22 @@ exports.deleteCurrency = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
+
+exports.getTotalCurrencies = async (req, res) => {
+  try {
+    const invalidDocuments = await Currency.find({ _id: "total" });
+
+    if (invalidDocuments.length > 0) {
+      // Log or handle the invalid documents
+      console.log("Invalid Documents:", invalidDocuments);
+      // You may choose to remove the invalid documents
+      // await Currency.deleteMany({ _id: "total" });
+    }
+
+    const totalCurrencies = await Currency.countDocuments({});
+
+    res.status(200).send({ totalCurrencies });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
